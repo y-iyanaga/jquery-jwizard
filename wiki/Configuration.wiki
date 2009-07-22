@@ -1,5 +1,27 @@
 #summary jWizard Configuration Options
 
+=Javascript Definition of Default Values=
+{{{
+var defaults = {
+	enableValidation: false,
+	hideCancelButton: false,
+	cssClasses: {
+		buttonsDiv: 'buttons',
+		stepDiv: 'step',
+		cancelButton: 'wizardButton',
+		previousButton: 'wizardButton',
+		nextButton: 'wizardButton',
+		finishButton: 'wizardButton'
+	},
+	onCancel: `function() {},`
+	onStepChange: `function() {}`,
+	onValidateStep: `function() { return true; }`,
+	onFinish: `function() {}`
+};
+}}}
+
+----
+
 =Configuration Options=
 ==General==
 || *Parameter Name* || *Type* || *Description* || *Default Value* ||
@@ -21,27 +43,3 @@
 || onFinish || Fired off when the Finish `<button>` is clicked. || function() {} ||
 || onStepChange || Fired off after the Next or Previous `<button>` is clicked and before the Step is actually changed. || function() {} ||
 || onValidateStep || _(NOT YET IMPLEMENTED)_ Handles the validation of a given step. || function() { return true; } ||
-
-
-----
-
-
-=Javascript Definition of Default Values=
-{{{
-var defaults = {
-	enableValidation: false,
-	hideCancelButton: false,
-	cssClasses: {
-		buttonsDiv: 'buttons',
-		stepDiv: 'step',
-		cancelButton: 'wizardButton',
-		previousButton: 'wizardButton',
-		nextButton: 'wizardButton',
-		finishButton: 'wizardButton'
-	},
-	onCancel: `function() {},`
-	onStepChange: `function() {}`,
-	onValidateStep: `function() { return true; }`,
-	onFinish: `function() {}`
-};
-}}}
