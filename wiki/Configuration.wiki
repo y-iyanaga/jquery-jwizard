@@ -1,0 +1,47 @@
+#summary jWizard Configuration Options
+
+=Configuration Options=
+==General==
+|| *Parameter Name* || *Type* || *Description* || *Default Value* ||
+|| hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
+|| enableValidation || boolean || _(NOT YET IMPLEMENTED)_ Determines whether or not to activate the Validation Events. || false ||
+
+==CSS Classes==
+|| *Parameter Name* || *Description* || *Default Value* ||
+|| buttonsDiv || Applies to the `<div>` surrounding the buttons. || buttons ||
+|| stepDiv || Applies to the `<div>` surrounding all of the steps in the wizard. || step ||
+|| cancelButton || Applies to the Cancel `<button>`. || wizardButton ||
+|| previousButton || Applies to the Previous `<button>`. || wizardButton ||
+|| nextButton || Applies to the Next `<button>`. || wizardButton ||
+|| finishButton || Applies to the Finish `<button>`. || wizardButton ||
+
+==Custom Events==
+|| *Parameter Name* || *Description* || *Default Value* ||
+|| onCancel || Fired off when the Cancel `<button>` is clicked. || function() {} ||
+|| onFinish || Fired off when the Finish `<button>` is clicked. || function() {} ||
+|| onStepChange || Fired off after the Next or Previous `<button>` is clicked and before the Step is actually changed. || function() {} ||
+|| onValidateStep || _(NOT YET IMPLEMENTED)_ Handles the validation of a given step. || function() { return true; } ||
+
+
+----
+
+
+=Javascript Definition of Default Values=
+{{{
+var defaults = {
+	enableValidation: false,
+	hideCancelButton: false,
+	cssClasses: {
+		buttonsDiv: 'buttons',
+		stepDiv: 'step',
+		cancelButton: 'wizardButton',
+		previousButton: 'wizardButton',
+		nextButton: 'wizardButton',
+		finishButton: 'wizardButton'
+	},
+	onCancel: `function() {},`
+	onStepChange: `function() {}`,
+	onValidateStep: `function() { return true; }`,
+	onFinish: `function() {}`
+};
+}}}
