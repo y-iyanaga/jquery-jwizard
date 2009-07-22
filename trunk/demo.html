@@ -1,0 +1,82 @@
+<html>
+
+<head>
+
+<title></title>
+
+<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.jWizard-0.1.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#wizard").jWizard({
+		hideCancelButton: false,
+		onStepChange: function(e) {
+			inputs = e.data.currentStep.find(':input');
+			inputs.each(function() {
+				var i = $(this);
+				if (i.val() === '') return false;
+			});
+		},
+		onFinishClick: function(e) {
+			inputs = e.data.allSteps.find(':input');
+			inputs.each(function() {
+				var i = $(this);
+			});
+		}
+	});
+});
+</script>
+
+<style type="text/css">
+<!--
+#wizard {
+	border: 3px solid #ccc;
+}
+
+#wizard div.step h1 {
+	margin: 0px;
+	padding: 10px;
+	border-bottom: 3px double #ccc;
+	background-color: #339;
+	color: white;
+}
+
+#wizard div.step p {
+	padding: 0px 10px;
+}
+
+#wizard .buttons {
+	border-top: 3px double #ccc;
+	padding: 10px;
+	text-align: right;
+	background-color: #339;
+}
+-->
+</style>
+
+</head>
+
+<body>
+
+<div id="wizard">
+	<div id="step1">
+		<h1>Test Step #1</h1>
+		<p>What is your name? <input type="text" id="name" name="name" /></p>
+	</div>
+	<div id="step2">
+		<h1>Test Step #2</h1>
+		<p>Sed imperdiet auctor metus, convallis ultricies velit iaculis vitae. Praesent in viverra odio. Morbi rutrum ornare porta. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec sed felis non tellus dignissim congue. Ut luctus, quam sit amet interdum ultricies, felis est accumsan ligula, eget cursus justo lectus ultrices elit. Etiam nisl sapien, rutrum sit amet lacinia et, pharetra vel enim. Nunc in mauris magna. Fusce ut est sapien. Pellentesque mi orci, dapibus vel consequat non, ullamcorper in dui. Morbi posuere urna nec velit porttitor non convallis nunc ultrices. Nullam nisi nulla, blandit in commodo vitae, faucibus quis nibh. Mauris in porttitor magna. Aliquam a diam ut enim rutrum imperdiet. Vestibulum hendrerit, dolor at tincidunt convallis, nisi ante pellentesque diam, ac convallis ipsum metus quis arcu. Fusce nec tortor eu erat iaculis posuere sed non neque. Etiam tempor commodo posuere. Nullam eu lorem nec ante fermentum consequat. Phasellus dui nibh, laoreet in dapibus rutrum, lobortis sed risus. Nunc lectus quam, facilisis in lobortis bibendum, gravida a nisl.</p>
+	</div>
+	<div id="step3">
+		<h1>Test Step #3</h1>
+		<p>Aenean molestie, odio egestas dictum pharetra, odio nibh cursus sapien, eget sollicitudin diam turpis nec justo. Aliquam erat volutpat. Nunc at auctor velit. Aliquam fermentum, sem ut gravida ornare, risus enim lacinia dolor, vitae sodales justo libero in ligula. In non velit felis. Maecenas placerat justo id nulla auctor pulvinar at sed leo. Integer posuere vulputate auctor. Sed consequat semper ligula, ut convallis dui ornare sit amet. Donec sed tempus mi. Nam eleifend lorem a ante consequat vitae vestibulum purus molestie. Maecenas quis mattis elit. Etiam pretium mi at libero dapibus sodales volutpat vel dolor. </p>
+	</div>
+	<div id="finalStep">
+		<h1>Test Final Step (#4)</h1>
+		<p>Suspendisse vitae sapien eu mi vulputate venenatis eu gravida purus. Vestibulum ultrices hendrerit neque in lacinia. Donec ultricies tristique blandit. Nulla mattis dui in enim semper pretium. Sed vestibulum gravida est a scelerisque. Vivamus sodales quam a sem sagittis tincidunt ullamcorper dui condimentum. Donec blandit lacinia dictum. Aenean laoreet suscipit lectus a pharetra. Nulla facilisi. Donec aliquam, massa vitae tempor scelerisque, velit tortor convallis enim, at mattis erat enim ut elit. In nec magna justo, sed lacinia mauris.</p>
+	</div>
+</div>
+
+</body>
+
+</html>
