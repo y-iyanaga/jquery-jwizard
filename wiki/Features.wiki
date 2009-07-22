@@ -1,0 +1,11 @@
+#summary Features (present and future) of jWizard
+
+===Existing Features===
+  * Slim HTML, CSS and JS setup requirements
+  * Custom Events
+  * Skin-able (via CSS Classes)
+
+===Upcoming Features===
+  * Step-based Form Validation 
+  * Custom Step-Navigation
+  * jQuery UI Themeroller Integration
