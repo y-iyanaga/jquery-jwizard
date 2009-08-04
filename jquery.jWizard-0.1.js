@@ -24,18 +24,20 @@
 			var defaults = {
 				enableValidation: false,
 				hideCancelButton: false,
-				cssClasses: {
-					buttonsDiv: 'buttons',
-					stepDiv: 'step',
-					cancelButton: 'wizardButton',
-					previousButton: 'wizardButton',
-					nextButton: 'wizardButton',
-					finishButton: 'wizardButton'
-				},
-				onCancel: function() {},
-				onStepChange: function() {},
+				hideTitle: false,
+				/* CSS Classes */
+				stepDivClass: 'step',
+				buttonsDivClass: 'buttons',
+				titleDivClass: 'title',
+				cancelButtonClass: 'wizardButton',
+				previousButtonClass: 'wizardButton',
+				nextButtonClass: 'wizardButton',
+				finishButtonClass: 'wizardButton',
+				/* Events */
+				onCancel: function() { alert('Cancel Button Clicked'); },
+				onStepChange: function() { return true; },
 				onValidateStep: function() { return true; },
-				onFinish: function() {}
+				onFinish: function() { alert('Finish Button Clicked'); }
 			};
 
 			/* Assign our Default Parameters (override with anything the end-user supplies) */
@@ -44,16 +46,18 @@
 			return this.each(function() {
 				var w = $(this);	// Create a reference to the wizard
 
-				w.find('div').addClass(settings.cssClasses.stepDiv);	// Add the assigned class to the Step <div>'s
+				w.find('div').addClass(settings.stepDivClass);	// Add the assigned class to the Step <div>'s
 				w.selectors = {
-					steps: 'div.' + settings.cssClasses.stepDiv,
-					buttonsDiv: 'div.' + settings.cssClasses.buttonsDiv,
-					currentStep: 'div.' + settings.cssClasses.stepDiv + ':visible'
+					steps: 'div.' + settings.stepDivClass,
+					buttonsDiv: 'div.' + settings.buttonsDivClass,
+					titleDiv: 'div.' + settings.titleDivClass,
+					currentStep: 'div.' + settings.stepDivClass + ':visible'
 				};
 
 				// Create our Action <button>s and <div>
-				w.append('<div class="' + settings.cssClasses.buttonsDiv + '"></div>');
+				w.append('<div class="' + settings.buttonsDivClass + '"></div>');
 				w.find(w.selectors.buttonsDiv).html('<button id="jw_cancel">Cancel</button><button id="jw_previous">Previous</button><button id="jw_next">Next</button><button id="jw_finish">Finish</button>');
+				w.prepend('<div class="' + settings.titleDivClass + '"></div>');
 
 				/* Identify our newly created <button>s */
 				w.cancelButton = w.find('button#jw_cancel');
@@ -62,10 +66,10 @@
 				w.finishButton = w.find('button#jw_finish');
 
 				/* Add the assigned classes to our <button>s */
-				w.cancelButton.addClass(settings.cssClasses.cancelButton);
-				w.previousButton.addClass(settings.cssClasses.previousButton);
-				w.nextButton.addClass(settings.cssClasses.nextButton);
-				w.finishButton.addClass(settings.cssClasses.finishButton);
+				w.cancelButton.addClass(settings.cancelButtonClass);
+				w.previousButton.addClass(settings.previousButtonClass);
+				w.nextButton.addClass(settings.nextButtonClass);
+				w.finishButton.addClass(settings.finishButtonClass);
 
 				if (settings.hideCancelButton)	w.cancelButton.hide();	// Hide the Cancel Button if the settings specify to
 
@@ -79,6 +83,9 @@
 				w.lastStep = w.find(w.selectors.steps + ':last');
 				w.currentStep = w.firstStep;
 
+				w.title = w.find(w.selectors.titleDiv).text(w.firstStep.attr('title'));
+
+
 				/**
 				 * @member	"Next" Button Click Event
 				 * @desc	This moves us to the next step.
@@ -86,7 +93,7 @@
 				w.nextButton.click(function() {
 					if (settings.enableValidation) {
 						w.bind('onValidateStep', settings.onValidateStep);
-						if (!w.trigger('onValidateStep'))
+						if (!w.triggerHandler('onValidateStep'))
 							return false;
 					}
 
@@ -142,10 +149,11 @@
 				w.changeStep = function(nextStep)
 				{
 					w.bind('onStepChange', { currentStep: w.currentStep, nextStep: nextStep }, settings.onStepChange);
-					if (!w.trigger('onStepChange'))	return false;	// If the trigger returns false, we return false here before the switch occurs
+					if (!w.triggerHandler('onStepChange'))	return false;	// If the trigger returns false, we return false here before the switch occurs
 
 					w.currentStep.hide();	// Hide the current Step
 					nextStep.show();
+					w.title.text(nextStep.attr('title'));
 
 					w.currentStep = $(w.selectors.currentStep);	// Update the current Step
 				};
