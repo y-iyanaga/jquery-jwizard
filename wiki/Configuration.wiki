@@ -5,18 +5,20 @@
 var defaults = {
 	enableValidation: false,
 	hideCancelButton: false,
-	cssClasses: {
-		buttonsDiv: 'buttons',
-		stepDiv: 'step',
-		cancelButton: 'wizardButton',
-		previousButton: 'wizardButton',
-		nextButton: 'wizardButton',
-		finishButton: 'wizardButton'
-	},
-	onCancel: `function() {},`
-	onStepChange: `function() {}`,
-	onValidateStep: `function() { return true; }`,
-	onFinish: `function() {}`
+	hideTitle: false,
+	/* CSS Classes */
+	stepDivClass: 'step',
+	buttonsDivClass: 'buttons',
+	titleDivClass: 'title',
+	cancelButtonClass: 'wizardButton',
+	previousButtonClass: 'wizardButton',
+	nextButtonClass: 'wizardButton',
+	finishButtonClass: 'wizardButton',
+	/* Events */
+	onCancel: function() { alert('Cancel Button Clicked'); },
+	onStepChange: function() { return true; },
+	onValidateStep: function() { return true; },
+	onFinish: function() { alert('Finish Button Clicked'); }
 };
 }}}
 
@@ -27,15 +29,16 @@ var defaults = {
 || *Parameter Name* || *Type* || *Description* || *Default Value* ||
 || hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
 || enableValidation || boolean || _(NOT YET IMPLEMENTED)_ Determines whether or not to activate the Validation Events. || false ||
+|| hideTitle || boolean || Determines whether or not to show the title of the current wizard step. || false ||
 
 ==CSS Classes==
 || *Parameter Name* || *Description* || *Default Value* ||
-|| buttonsDiv || Applies to the `<div>` surrounding the buttons. || buttons ||
-|| stepDiv || Applies to the `<div>` surrounding all of the steps in the wizard. || step ||
-|| cancelButton || Applies to the Cancel `<button>`. || wizardButton ||
-|| previousButton || Applies to the Previous `<button>`. || wizardButton ||
-|| nextButton || Applies to the Next `<button>`. || wizardButton ||
-|| finishButton || Applies to the Finish `<button>`. || wizardButton ||
+|| buttonsDivClass || Applies to the `<div>` surrounding the buttons. || buttons ||
+|| stepDivClass || Applies to the `<div>` surrounding all of the steps in the wizard. || step ||
+|| cancelButtonClass || Applies to the Cancel `<button>`. || wizardButton ||
+|| previousButtonClass || Applies to the Previous `<button>`. || wizardButton ||
+|| nextButtonClass || Applies to the Next `<button>`. || wizardButton ||
+|| finishButtonClass || Applies to the Finish `<button>`. || wizardButton ||
 
 ==Custom Events==
 || *Parameter Name* || *Description* || *Default Value* ||
