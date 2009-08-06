@@ -1,4 +1,5 @@
 #summary jWizard Configuration Options
+#labels Featured
 
 =Javascript Definition of Default Values=
 {{{
