@@ -46,7 +46,6 @@
 			return this.each(function() {
 				var w = $(this);	// Create a reference to the wizard
 
-				w.find('div').addClass(settings.stepDivClass);	// Add the assigned class to the Step <div>'s
 				w.selectors = {
 					steps: 'div.' + settings.stepDivClass,
 					buttonsDiv: 'div.' + settings.buttonsDivClass,
@@ -54,10 +53,23 @@
 					currentStep: 'div.' + settings.stepDivClass + ':visible'
 				};
 
+				w.find('div').addClass('ui-widget-content').addClass(settings.stepDivClass);	// Add the assigned class to the Step <div>'s
+
 				// Create our Action <button>s and <div>
-				w.append('<div class="' + settings.buttonsDivClass + '"></div>');
-				w.find(w.selectors.buttonsDiv).html('<button id="jw_cancel">Cancel</button><button id="jw_previous">Previous</button><button id="jw_next">Next</button><button id="jw_finish">Finish</button>');
-				w.prepend('<div class="' + settings.titleDivClass + '"></div>');
+				var titleDiv = $('<div />').addClass('ui-widget-header').addClass(settings.titleDivClass);
+				var buttonsDiv = $('<div />').addClass('ui-widget-content').addClass(settings.buttonsDivClass);
+				var cancelButton = $('<button />').attr('id', 'jw_cancel').addClass('ui-state-default').html('Cancel');
+				var previousButton = $('<button />').attr('id', 'jw_previous').addClass('ui-state-default').html('Previous');
+				var nextButton = $('<button />').attr('id', 'jw_next').addClass('ui-state-default').html('Next');
+				var finishButton = $('<button />').attr('id', 'jw_finish').addClass('ui-state-default').html('Finish');
+				buttonsDiv.append(cancelButton).append(previousButton).append(nextButton).append(finishButton);
+				w.append(buttonsDiv);
+				w.prepend(titleDiv);
+
+				w.find('.ui-state-default').hover(
+					function() { $(this).addClass('ui-state-hover'); },
+					function() { $(this).removeClass('ui-state-hover'); }
+				);
 
 				/* Identify our newly created <button>s */
 				w.cancelButton = w.find('button#jw_cancel');
