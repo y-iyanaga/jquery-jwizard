@@ -3,7 +3,23 @@
 = Introduction =
 As of version 0.3a, the plugin has been made a bit more object-oriented. (as much as Javascript will allow, since it is prototype-oriented) As such, there are now some internal methods that will be exposed to the user in order to make more flexible implementations of the Wizard.
 
+= How to call upon these methods =
+After instantiating jWizard
+{{{
+$([selector]).jWizard([options]);
+}}}
+
+To call an individual method:
+{{{
+$([selector]).data('jWizard').goToStep(3);
+}}}
+
+You can also store the jWizard object into a variable to make multiple references:
+{{{
+var jWizard = $([selector]).data('jWizard');
+jWizard.goToStep(3);
+}}}
 
 = The Methods =
 || Method Name || Parameters || Description || Returns ||
-|| goToStep() || (int)index* || Programmatically set the currentStep of the Wizard || void || 
+|| goToStep() || (integer)index [required] || Programmatically set the currentStep of the Wizard || void || 
