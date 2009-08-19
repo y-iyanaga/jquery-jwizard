@@ -16,10 +16,11 @@ $([selector]).data('jWizard').goToStep(3);
 
 You can also store the jWizard object into a variable to make multiple references:
 {{{
-var jWizard = $(_selector_).data('jWizard');
+var jWizard = $([selector]).data('jWizard');
 jWizard.goToStep(3);
 }}}
 
 = The Methods =
 || Method Name || Parameters || Description || Returns ||
-|| goToStep() || (integer) index *required* || Programmatically set the current step of the Wizard || void || 
+|| goToStep() || (integer) index *required* || Programmatically set the current step of the Wizard || void ||
+|| changeStep() || (jQuery) nextStep *required* || Programmatically set the current step of the Wizard (with a jQuery object instead of an index) || void ||
