@@ -6,21 +6,22 @@ As of version 0.3a, the plugin has been made a bit more object-oriented. (as muc
 = How to call upon these methods =
 After instantiating jWizard
 {{{
-$([selector]).jWizard([options]);
+$([wizard_selector]).jWizard([options]);
 }}}
 
 To call an individual method:
 {{{
-$([selector]).data('jWizard').goToStep(3);
+$([wizard_selector]).data('jWizard').goToStep(3);
 }}}
 
 You can also store the jWizard object into a variable to make multiple references:
 {{{
-var jWizard = $([selector]).data('jWizard');
-jWizard.goToStep(3);
+var jWizard = $([wizard_selector]).data('jWizard');
+jWizard.changeStep(3);
+jWizard.changeStep(jWizard.itemCount - 1);
+jWizard.changeStep($([step_selector]));
 }}}
 
 = The Methods =
 || Method Name || Parameters || Description || Returns ||
-|| goToStep() || (integer) index *required* || Programmatically set the current step of the Wizard || void ||
-|| changeStep() || (jQuery) nextStep *required* || Programmatically set the current step of the Wizard (with a jQuery object instead of an index) || void ||
+|| changeStep() || (jQuery/int) nextStep *required* || Programmatically set the current step of the Wizard (with either a jQuery object or an index) || void ||
