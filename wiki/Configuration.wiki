@@ -3,24 +3,32 @@
 
 =Javascript Definition of Default Values=
 {{{
-var defaults = {
-	enableValidation: false,
-	hideCancelButton: false,
-	hideTitle: false,
-	/* CSS Classes */
-	stepDivClass: 'step',
-	buttonsDivClass: 'buttons',
-	titleDivClass: 'title',
-	cancelButtonClass: 'wizardButton',
-	previousButtonClass: 'wizardButton',
-	nextButtonClass: 'wizardButton',
-	finishButtonClass: 'wizardButton',
-	/* Events */
-	onCancel: function() { alert('Cancel Button Clicked'); },
-	onStepChange: function() { return true; },
-	onValidateStep: function() { return true; },
-	onFinish: function() { alert('Finish Button Clicked'); }
-};
+		var defaults = {
+			activeStep: 0,
+			enableThemeRoller: false,
+			hideCancelButton: false,
+			hideTitle: false,
+
+			/* Button Text */
+			cancelButtonText: 'Cancel',
+			previousButtonText: 'Previous',
+			nextButtonText: 'Next',
+			finishButtonText: 'Finish',
+
+			/* CSS Classes */
+			stepDivClass: 'step',
+			buttonsDivClass: 'buttons',
+			titleDivClass: 'title',
+			cancelButtonClass: 'wizardButton',
+			previousButtonClass: 'wizardButton',
+			nextButtonClass: 'wizardButton',
+			finishButtonClass: 'wizardButton',
+
+			/* Events */
+			onCancel: function() { alert('Cancel Button Clicked'); },
+			onStepChange: function() { return true; },
+			onFinish: function() { alert('Finish Button Clicked'); }
+		};
 }}}
 
 ----
@@ -28,14 +36,16 @@ var defaults = {
 =Configuration Options=
 ==General==
 || *Parameter Name* || *Type* || *Description* || *Default Value* ||
+|| activeStep || integer || Determines which step the wizard will display first || 0 ||
+|| enableThemeRoller || boolean || Determines whether or not to apply jQuery UI ThemeRoller Classes to the wizard || false ||
 || hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
-|| enableValidation || boolean || _(NOT YET IMPLEMENTED)_ Determines whether or not to activate the Validation Events. || false ||
 || hideTitle || boolean || Determines whether or not to show the title of the current wizard step. || false ||
 
 ==CSS Classes==
 || *Parameter Name* || *Description* || *Default Value* ||
-|| buttonsDivClass || Applies to the `<div>` surrounding the buttons. || buttons ||
 || stepDivClass || Applies to the `<div>` surrounding all of the steps in the wizard. || step ||
+|| buttonsDivClass || Applies to the `<div>` surrounding the buttons. || buttons ||
+|| titleDivClass || Applies to the `<div>` surrounding the title. || title ||
 || cancelButtonClass || Applies to the Cancel `<button>`. || wizardButton ||
 || previousButtonClass || Applies to the Previous `<button>`. || wizardButton ||
 || nextButtonClass || Applies to the Next `<button>`. || wizardButton ||
@@ -46,4 +56,3 @@ var defaults = {
 || onCancel || Fired off when the Cancel `<button>` is clicked. || function() {} ||
 || onFinish || Fired off when the Finish `<button>` is clicked. || function() {} ||
 || onStepChange || Fired off after the Next or Previous `<button>` is clicked and before the Step is actually changed. || function() {} ||
-|| onValidateStep || _(NOT YET IMPLEMENTED)_ Handles the validation of a given step. || function() { return true; } ||
