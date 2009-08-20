@@ -6,8 +6,9 @@
   * Custom Events
   * Flexible CSS and Styling Capability
   * jQuery UI Themeroller Integration
+  * Programmatic Step-Navigation (via Public Methods)
+  * Custom Button Text
 
 ===Upcoming Features===
-  * Custom Step-Navigation
-  * Custom Button Text
-  * Step-based Form Validation 
+  * Sidebar Navigation (Step Titles and/or Step Numbering)
+  * Integrated Form Validation (Step-Based)
