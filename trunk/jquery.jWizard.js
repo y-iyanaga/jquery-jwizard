@@ -23,7 +23,8 @@
 		 */
 		var defaults = {
 			activeStep: 0,
-			enableValidation: false,
+			// enableValidation: false, --NOT YET IMPLEMENTED
+			enableThemeRoller: false,
 			hideCancelButton: false,
 			hideTitle: false,
 
@@ -45,7 +46,7 @@
 			/* Events */
 			onCancel: function() { alert('Cancel Button Clicked'); },
 			onStepChange: function() { return true; },
-			onValidateStep: function() { return true; },
+			// onValidateStep: function() { return true; }, --NOT YET IMPLEMENTED
 			onFinish: function() { alert('Finish Button Clicked'); }
 		};
 
@@ -63,12 +64,12 @@
 		};
 
 		// Create our Action <button>s and <div>
-		w.titleDiv = $('<div />').addClass('ui-widget-header').addClass(options.titleDivClass);
-		w.buttonsDiv = $('<div />').addClass('ui-widget-content').addClass(options.buttonsDivClass);
-		var cancelButton = $('<button />').attr('id', 'jw_cancel').addClass('ui-state-default').addClass(options.cancelButtonClass).html(options.cancelButtonText);
-		var previousButton = $('<button />').attr('id', 'jw_previous').addClass('ui-state-default').addClass(options.previousButtonClass).html(options.previousButtonText);
-		var nextButton = $('<button />').attr('id', 'jw_next').addClass('ui-state-default').addClass(options.nextButtonClass).html(options.nextButtonText);
-		var finishButton = $('<button />').attr('id', 'jw_finish').addClass('ui-state-default').addClass(options.finishButtonClass).html(options.finishButtonText);
+		w.titleDiv = $('<div />').addClass(options.titleDivClass);
+		w.buttonsDiv = $('<div />').addClass(options.buttonsDivClass);
+		var cancelButton = $('<button />').attr('id', 'jw_cancel').addClass(options.cancelButtonClass).html(options.cancelButtonText);
+		var previousButton = $('<button />').attr('id', 'jw_previous').addClass(options.previousButtonClass).html(options.previousButtonText);
+		var nextButton = $('<button />').attr('id', 'jw_next').addClass(options.nextButtonClass).html(options.nextButtonText);
+		var finishButton = $('<button />').attr('id', 'jw_finish').addClass(options.finishButtonClass).html(options.finishButtonText);
 		w.buttonsDiv.append(cancelButton).append(previousButton).append(nextButton).append(finishButton);
 
 		/**
@@ -108,21 +109,41 @@
 		 * @desc
 		 */
 		w.changeStep = function(nextStep) {
-			if (!w.triggerHandler('onStepChange', [ w.currentStep, nextStep ]))	return false;	// If the trigger returns false, we return false here before the switch occurs
+			if (typeof nextStep === 'number')
+			{
+				if (nextStep < 0 || nextStep > (w.itemCount - 1))
+				{
+					alert('Index ' + nextStep + ' Out of Range');
+					return false;
+				}
+
+				nextStep = w.find(selectors.steps + ':eq(' + nextStep + ')');
+			}
+			else if (typeof nextStep === 'object')
+			{
+				if ( !nextStep.is(selectors.steps) )
+				{
+					alert('Supplied Element is NOT one of the Wizard Steps');
+					return false;
+				}
+			}
+
+			if (!w.triggerHandler('onStepChange', [ w.currentStep, nextStep ]))
+				return false;	// If the trigger returns false, we return false here before the switch occurs
 
 			w.currentStep.hide();	// Hide the current Step
-			nextStep.show();
 			w.titleDiv.text(nextStep.attr('title'));
+			nextStep.show();
 
 			w.currentStep = w.find(selectors.currentStep);	// Update the current Step
-			w.updateButtons();
+			updateButtons();
 		};
 
 		/**
 		 * @member	updateButtons
 		 * @desc	Based on the current step, we will show and hide certain buttons.
 		 */
-		w.updateButtons = function() {
+		var updateButtons = function() {
 			var currentId = w.currentStep.attr('id');
 			var firstId = w.firstStep.attr('id');
 			var lastId = w.lastStep.attr('id');
@@ -149,16 +170,12 @@
 			}
 		};
 
-		w.goToStep = function(index) {
-			w.changeStep(w.find(selectors.steps + ':eq(' + index + ')'));
-		};
-
 		w.bind('onFinish', options.onFinish);
 		w.bind('onCancel', options.onCancel);
 		w.bind('onStepChange', options.onStepChange);
 		// w.bind('onValidateStep', options.onValidateStep); --NOT YET IMPLEMENTED
 
-		w.children('div').addClass('ui-widget-content').addClass(options.stepDivClass);	// Add the assigned class to the Step <div>'s
+		w.itemCount = w.children('div').addClass(options.stepDivClass).size();	// Add the assigned class to the Step <div>'s
 
 		w.firstStep = w.find(selectors.steps + ':first');
 		w.lastStep = w.find(selectors.steps + ':last');
@@ -167,18 +184,25 @@
 		w.prepend(w.titleDiv);
 		w.append(w.buttonsDiv);
 
-		w.find('.ui-state-default').hover(
-			function() { $(this).addClass('ui-state-hover'); },
-			function() { $(this).removeClass('ui-state-hover'); }
-		);
-
 		w.find(selectors.steps).hide();
 
-		if (options.hideCancelButton)	cancelButton.hide();	// Hide the Cancel Button if the options specify to
-		previousButton.hide();	// The previous button is hidden by default
-		finishButton.hide();	// The finish button is hidden by default
+		if (options.enableThemeRoller)
+		{
+			w.titleDiv.addClass('ui-widget-header');
+			w.buttonsDiv.addClass('ui-widget-content');
+			w.buttonsDiv.find('button').addClass('ui-state-default');
+			w.children('div').addClass('ui-widget-content');
 
-		w.goToStep(options.activeStep);
+			w.find('.ui-state-default').hover(
+				function() { $(this).addClass('ui-state-hover'); },
+				function() { $(this).removeClass('ui-state-hover'); }
+			);
+		}
+
+		if (options.hideCancelButton)	cancelButton.hide();	// Hide the Cancel Button if the options specify to
+		updateButtons();
+
+		w.changeStep(options.activeStep);
 
 		return w;
 	};
