@@ -8,7 +8,7 @@
   * jQuery UI Themeroller Integration
   * Programmatic Step-Navigation (via Public Methods)
   * Custom Button Text
+  * Sidebar Navigation (Step Titles and/or Step Numbering)
 
 ===Upcoming Features===
-  * Sidebar Navigation (Step Titles and/or Step Numbering)
   * Integrated Form Validation (Step-Based)
