@@ -3,112 +3,92 @@
  * @author	Dominic Barnes
  * @desc	A wizard plugin that actually works with minimal configuration. (per jQuery's design philosophy)
  * @type	jQuery
- * @version	0.3a
- *
- * --- Features ---
- * - Minimal HTML, CSS and JS startup requirements
- * - Custom Events for end-users to hook into within their applications
- * - Stylable (via CSS Classes)
- * - Step-based Form Validation
+ * @version	0.5b
  */
 (function($){
 	var jWizard = function(element, options) {
-		/**
-		 * --- Default Parameters ---
-		 * @param hideCancelButton If set to true, this will hide the "Cancel" Button (defaults to false)
-		 * @param cssClasses Assign CSS Class Names to different components of the Wizard
-		 * @param onStepChange Custom Event: Fires off any time the Step changes (more specifically, when the "Next" or "Previous" button is clicked)
-		 * @param onCancel Custom Event: Fires off when the user clicks the "Cancel" button
-		 * @param onFinish Custom Event: Fires off when the user clicks the "Finish" button
-		 */
 		var defaults = {
-			activeStep: 0,
-			// enableValidation: false, --NOT YET IMPLEMENTED
+			startStep: 0,
 			enableThemeRoller: false,
-			hideCancelButton: false,
 			hideTitle: false,
+			enableCounter: false,
 
-			/* Button Text */
-			cancelButtonText: 'Cancel',
-			previousButtonText: 'Previous',
-			nextButtonText: 'Next',
-			finishButtonText: 'Finish',
+			/* Button Rules */
+			hideCancelButton: false,
+			finishButtonType: 'button',
+			buttonText: {
+				cancel: 'Cancel',
+				previous: 'Previous',
+				next: 'Next',
+				finish: 'Finish'
+			},
+
+			/* Menu Rules */
+			enableMenu: false,
+			menuWidth: '10em',
 
 			/* CSS Classes */
-			stepDivClass: 'step',
-			buttonsDivClass: 'buttons',
-			titleDivClass: 'title',
-			cancelButtonClass: 'wizardButton',
-			previousButtonClass: 'wizardButton',
-			nextButtonClass: 'wizardButton',
-			finishButtonClass: 'wizardButton',
+			cssClasses: {
+				title: 'title',
+				menu: {
+					div: 'menu',
+					active: 'active',
+					current: 'current',
+					inactive: 'inactive'
+				},
+				steps: {
+					wrapper: 'stepwrapper',
+					all: 'step'
+				},
+				counter: 'counter',
+				buttons: {
+					div: 'buttons',
+					cancel: 'wizardButton',
+					previous: 'wizardButton',
+					next: 'wizardButton',
+					finish: 'wizardButton'
+				}
+			},
 
 			/* Events */
-			onCancel: function() { alert('Cancel Button Clicked'); },
-			onStepChange: function() { return true; },
-			// onValidateStep: function() { return true; }, --NOT YET IMPLEMENTED
-			onFinish: function() { alert('Finish Button Clicked'); }
+			events: {
+				onCancel: function(e) { return true; },
+				onFinish: function(e) { return true; }
+			}
 		};
 
 		/* Assign our Default Parameters (override with anything the end-user supplies) */
-		var options = $.extend({}, defaults, options);
+		var options = $.extend(true, {}, defaults, options);
 
 		var w = $(element);	// Create a reference to the wizard itself
 
 		// Assign some strings here so we can easily call on them again (rather than running those crazy concats all the time)
+		var tmpMenuDiv = 'div.' + options.cssClasses.menu.div;
+		var tmpStepwrapperDiv =  'div.' + options.cssClasses.steps.wrapper;
+		var tmpStepsDiv = 'div.' + options.cssClasses.steps.all;
 		var selectors = {
-			steps: 'div.' + options.stepDivClass,
-			buttonsDiv: 'div.' + options.buttonsDivClass,
-			titleDiv: 'div.' + options.titleDivClass,
-			currentStep: 'div.' + options.stepDivClass + ':visible'
+			title: {
+				div: 'div.' + options.cssClasses.title
+			},
+			menu: {
+				div: tmpMenuDiv,
+				active: tmpMenuDiv + ' li.' + options.cssClasses.menu.active,
+				current: tmpMenuDiv + ' li.' + options.cssClasses.menu.current,
+				inactive: tmpMenuDiv + ' li.' + options.cssClasses.menu.inactive
+			},
+			counter: 'span.' + options.cssClasses.counter,
+			steps: {
+				wrapper: tmpStepwrapperDiv,
+				all: tmpStepsDiv,
+				current: tmpStepsDiv + ':visible'
+			},
+			buttons: {
+				div: 'div.' + options.cssClasses.buttons.div
+			}
 		};
 
-		// Create our Action <button>s and <div>
-		w.titleDiv = $('<div />').addClass(options.titleDivClass);
-		w.buttonsDiv = $('<div />').addClass(options.buttonsDivClass);
-		var cancelButton = $('<button />').attr('id', 'jw_cancel').addClass(options.cancelButtonClass).html(options.cancelButtonText);
-		var previousButton = $('<button />').attr('id', 'jw_previous').addClass(options.previousButtonClass).html(options.previousButtonText);
-		var nextButton = $('<button />').attr('id', 'jw_next').addClass(options.nextButtonClass).html(options.nextButtonText);
-		var finishButton = $('<button />').attr('id', 'jw_finish').addClass(options.finishButtonClass).html(options.finishButtonText);
-		w.buttonsDiv.append(cancelButton).append(previousButton).append(nextButton).append(finishButton);
 
-		/**
-		 * @member	"Next" Button Click Event
-		 * @desc	This moves us to the next step.
-		 */
-		nextButton.click(function() {
-			w.changeStep(w.currentStep.next(selectors.steps));
-		});
-
-		/**
-		 * @member	"Previous" Button Click Event
-		 * @desc	This moves us to the previous step.
-		 */
-		previousButton.click(function() {
-			w.changeStep(w.currentStep.prev(selectors.steps));
-		});
-
-		/**
-		 * @member	"Cancel" Button Click Event
-		 * @desc	Call the User-Supplied onCancel method
-		 */
-		cancelButton.click(function() {
-			w.trigger('onCancel');
-		});
-
-		/**
-		 * @member	"Finish" Button Click Event
-		 * @desc	Call the User-Supplied onFinish method
-		 */
-		finishButton.click(function() {
-			w.trigger('onFinish');
-		});
-
-		/**
-		 * @member changeStep
-		 * @desc
-		 */
-		w.changeStep = function(nextStep) {
+		w.changeStep = function(nextStep, isInit) {
 			if (typeof nextStep === 'number')
 			{
 				if (nextStep < 0 || nextStep > (w.itemCount - 1))
@@ -117,92 +97,220 @@
 					return false;
 				}
 
-				nextStep = w.find(selectors.steps + ':eq(' + nextStep + ')');
+				nextStep = w.find(selectors.steps.all + ':eq(' + nextStep + ')');
 			}
 			else if (typeof nextStep === 'object')
 			{
-				if ( !nextStep.is(selectors.steps) )
+				if ( !nextStep.is(selectors.steps.all) )
 				{
 					alert('Supplied Element is NOT one of the Wizard Steps');
 					return false;
 				}
 			}
 
-			if (!w.triggerHandler('onStepChange', [ w.currentStep, nextStep ]))
-				return false;	// If the trigger returns false, we return false here before the switch occurs
+			w.currentStep.triggerHandler('onDeactivate');
+			w.currentStep.hide();
+			if (!options.hideTitle)	w.titleDiv.text(nextStep.attr('title'));
 
-			w.currentStep.hide();	// Hide the current Step
-			w.titleDiv.text(nextStep.attr('title'));
-			nextStep.show();
+			nextStep.show().triggerHandler('onActivate');
 
-			w.currentStep = w.find(selectors.currentStep);	// Update the current Step
-			updateButtons();
+			w.currentStep = w.find(selectors.steps.current);
+			w.currentStepIndex = getCurrentStepIndex();
+
+			buttons.update();
+			if (options.enableMenu)	menu.update();
+			if (options.enableCounter)	counter.update();
 		};
 
-		/**
-		 * @member	updateButtons
-		 * @desc	Based on the current step, we will show and hide certain buttons.
-		 */
-		var updateButtons = function() {
-			var currentId = w.currentStep.attr('id');
-			var firstId = w.firstStep.attr('id');
-			var lastId = w.lastStep.attr('id');
+		function getCurrentStepIndex() {
+			var returnIndex = 0;
+			var currentTitle = w.currentStep.attr('title');
 
-			switch (currentId)
-			{
-				case firstId:
-					previousButton.hide();
-					nextButton.show();
-					finishButton.hide();
-					break;
+			var x = 0;
+			w.find(selectors.steps.all).each(function() {
+				var thisTitle = $(this).attr('title');
 
-				case lastId:
-					previousButton.show();
-					nextButton.hide();
-					finishButton.show();
-					break;
+				if (thisTitle === currentTitle)	returnIndex = x;
 
-				default:
-					previousButton.show();
-					nextButton.show();
-					finishButton.hide();
-					break;
+				x++;
+			});
+
+			return returnIndex;
+		};
+
+		var menu = {
+			build: function() {
+				var tmpHtml = '<div class="menuwrapper"><div class="menu"><ol>';
+				var x = 0;
+				w.find(selectors.steps.all).each(function() {
+					tmpHtml += '<li><a step="' + x + '">' + $(this).attr('title') + '</a></li>';
+					x++;
+				});
+				tmpHtml += '</ol></div></div>';
+
+				w.menuDiv = $(tmpHtml);
+				w.find(selectors.steps.wrapper).prepend(w.menuDiv).append('<div style="clear: both;"></div>');
+				w.menuDiv.css({
+					'width': options.menuWidth,
+					'margin-right': '-' + options.menuWidth,
+					'float': 'left'
+				});
+				w.find(selectors.steps.all).css('margin-left', options.menuWidth);
+
+				w.find(selectors.menu.active).live('click', function() {
+					w.changeStep(parseInt($(this).children('a').attr('step')));
+				});
+			},
+
+			update: function() {
+				var menuItemIndex = 0;
+				var menuItemStatus = 'active';
+
+				w.menuDiv.find(selectors.menu.div + ' a').each(function() {
+					var menuItem = $(this).parent();
+					var menuItemAnchor = $(this);
+
+					if ( menuItemAnchor.text() === w.currentStep.attr('title') )
+						menuItemStatus = 'current';
+					else if (menuItemStatus === 'current')
+						menuItemStatus = 'inactive';
+
+					menuItem.removeClass().addClass(menuItemStatus);
+
+					if (menuItem.hasClass('active'))
+						menuItemAnchor.attr('href', 'javascript:void(0);');
+					else
+						menuItemAnchor.removeAttr('href');
+
+					if (options.enableThemeRoller)
+					{
+						if (menuItem.hasClass('active'))
+							menuItem.addClass('ui-state-default');
+						else if (menuItem.hasClass('current'))
+							menuItem.addClass('ui-state-highlight');
+						else
+							menuItem.addClass('ui-state-disabled');
+					}
+
+					menuItemIndex++;
+				});
 			}
 		};
 
-		w.bind('onFinish', options.onFinish);
-		w.bind('onCancel', options.onCancel);
-		w.bind('onStepChange', options.onStepChange);
-		// w.bind('onValidateStep', options.onValidateStep); --NOT YET IMPLEMENTED
+		var counter = {
+			build: function() {
+				w.counterSpan = $('<span class="' + options.cssClasses.counter + '" />');
+				w.buttonsDiv.prepend(w.counterSpan);
+			},
 
-		w.itemCount = w.children('div').addClass(options.stepDivClass).size();	// Add the assigned class to the Step <div>'s
+			update: function() {
+				w.counterSpan.text((w.currentStepIndex + 1) + ' of ' + w.itemCount);
+			}
+		};
 
-		w.firstStep = w.find(selectors.steps + ':first');
-		w.lastStep = w.find(selectors.steps + ':last');
-		w.currentStep = w.find(selectors.steps + ':eq(' + options.activeStep + ')');
+		var buttons = {
+			build: function() {
+				w.buttonsDiv = $('<div class="' + options.cssClasses.buttons.div + '"></div>');
+				w.cancelButton = $('<button type="button" class="' + options.cssClasses.buttons.cancel + '">' + options.buttonText.cancel + '</button>');
+				w.previousButton = $('<button type="button" class="' + options.cssClasses.buttons.previous + '">' + options.buttonText.previous + '</button>');
+				w.nextButton = $('<button type="button" class="' + options.cssClasses.buttons.next + '">' + options.buttonText.next + '</button>');
+				w.finishButton = $('<button type="' + options.finishButtonType + '" class="' + options.cssClasses.buttons.finish + '">' + options.buttonText.finish + '</button>');
 
-		w.prepend(w.titleDiv);
+				w.nextButton.click(function() {
+					w.changeStep(w.currentStep.next(selectors.steps.all));
+				});
+				w.previousButton.click(function() {
+					w.changeStep(w.currentStep.prev(selectors.steps.all));
+				});
+				w.cancelButton.click(function() {
+					w.trigger('onCancel');
+				});
+				w.finishButton.click(function() {
+					w.trigger('onFinish');
+				});
+
+				w.buttonsDiv.append(w.cancelButton).append(w.previousButton).append(w.nextButton).append(w.finishButton);
+			},
+
+			update: function() {
+				var currentId = w.currentStep.attr('id');
+				var firstId = w.firstStep.attr('id');
+				var lastId = w.lastStep.attr('id');
+
+				switch (currentId)
+				{
+					case firstId:
+						w.previousButton.hide();
+						w.nextButton.show();
+						w.finishButton.hide();
+						break;
+
+					case lastId:
+						w.previousButton.show();
+						w.nextButton.hide();
+						w.finishButton.show();
+						break;
+
+					default:
+						w.previousButton.show();
+						w.nextButton.show();
+						w.finishButton.hide();
+						break;
+				}
+			}
+		};
+
+		w.bind('onFinish', options.events.onFinish);
+		w.bind('onCancel', options.events.onCancel);
+
+		buttons.build();
+
+		w.children('div').addClass(options.cssClasses.steps.all);	// Add the assigned class to the Step <div>'s
+		w.itemCount = w.find(selectors.steps.all).size();
+		w.find(selectors.steps.all).hide();
+		w.stepWrapperDiv = $('<div class="stepwrapper"></div>');
+		w.find(selectors.steps.all).wrapAll(w.stepWrapperDiv);
+
+		w.firstStep = w.find(selectors.steps.all + ':first');
+		w.lastStep = w.find(selectors.steps.all + ':last');
+		w.currentStep = w.find(selectors.steps.all + ':eq(' + options.startStep + ')');
+
+		if (options.hideCancelButton)	w.cancelButton.hide();
+
+		if (!options.hideTitle)
+		{
+			w.titleDiv = $('<div class="' + options.cssClasses.title + '"></div>');
+			w.prepend(w.titleDiv);
+		}
 		w.append(w.buttonsDiv);
 
-		w.find(selectors.steps).hide();
+		if (options.enableMenu)	menu.build();
+		if (options.enableCounter)	counter.build();
 
 		if (options.enableThemeRoller)
 		{
-			w.titleDiv.addClass('ui-widget-header');
+			w.addClass('ui-widget');
+			w.find(selectors.steps.wrapper).addClass('ui-widget-content');
 			w.buttonsDiv.addClass('ui-widget-content');
 			w.buttonsDiv.find('button').addClass('ui-state-default');
-			w.children('div').addClass('ui-widget-content');
 
-			w.find('.ui-state-default').hover(
-				function() { $(this).addClass('ui-state-hover'); },
-				function() { $(this).removeClass('ui-state-hover'); }
-			);
+			if (!options.hideTitle)
+				w.titleDiv.addClass('ui-widget-header');
+
+			if (options.enableMenu)
+				w.menuDiv.find(selectors.menu.active).addClass('ui-state-default');
+
+			if (options.enableCounter)
+				w.counterSpan.addClass('ui-widget-content');
+
+			w.find('.ui-state-default')
+				.live('mouseover',	function() { $(this).addClass('ui-state-hover'); } )
+				.live('mouseout',		function() { $(this).removeClass('ui-state-hover'); } )
+				.live('mousedown',	function() { $(this).addClass('ui-state-active'); } )
+				.live('mouseup',		function() { $(this).removeClass('ui-state-active'); } );
 		}
 
-		if (options.hideCancelButton)	cancelButton.hide();	// Hide the Cancel Button if the options specify to
-		updateButtons();
-
-		w.changeStep(options.activeStep);
+		w.changeStep(parseInt(options.startStep), true);
 
 		return w;
 	};
