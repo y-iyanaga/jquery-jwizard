@@ -108,7 +108,7 @@
 				}
 			}
 
-			w.currentStep.triggerHandler('onDeactivate');
+			if (!isInit)	w.currentStep.triggerHandler('onDeactivate');
 			w.currentStep.hide();
 			if (!options.hideTitle)	w.titleDiv.text(nextStep.attr('title'));
 
