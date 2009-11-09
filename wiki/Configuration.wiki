@@ -11,6 +11,7 @@ var defaults = {
 
 	/* Button Rules */
 	hideCancelButton: false,
+	finishButtonType: 'button',
 	buttonText: {
 		cancel: 'Cancel',
 		previous: 'Previous',
@@ -47,11 +48,11 @@ var defaults = {
 
 	/* Events */
 	events: {
-		onCancel: function() { alert('Cancel Button Clicked'); },
-		onStepChange: function() { return true; },
-		onFinish: function() { alert('Finish Button Clicked'); }
+		onCancel: function(e) { return true; },
+		onFinish: function(e) { return true; }
 	}
 };
+
 }}}
 
 ----
@@ -62,10 +63,17 @@ var defaults = {
 || startStep || integer || Determines which step the wizard will display first || 0 ||
 || enableThemeRoller || boolean || Determines whether or not to apply jQuery UI ThemeRoller Classes to the wizard || false ||
 || enableCounter || boolean || Determines whether or not to add the counter to the wizard || false ||
-|| hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
 || hideTitle || boolean || Determines whether or not to show the title of the current wizard step. || false ||
 
-==Menu Related==
+==Button-Related==
+|| hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
+|| finishButtonType || string || Determines the value of the "type" attribute of the Finish Button. (using 'submit' allows jWizard to integrate seamlessly with HTML Forms) || 'button' ||
+|| buttonText.cancel || string || Determines the text displayed on the Cancel Button || 'Cancel' ||
+|| buttonText.previous || string || Determines the text displayed on the Previous Button || 'Previous' ||
+|| buttonText.next || string || Determines the text displayed on the Next Button || 'Next' ||
+|| buttonText.finish || string || Determines the text displayed on the Cancel Button || 'Finish' ||
+
+==Menu-Related==
 || *Parameter Name* || *Type* || *Description* || *Default Value* ||
 || enableMenu || boolean || Determines whether or not to add the sidebar menu to the wizard || false ||
 || menuWidth || string || Put in a valid CSS 'width' property value, and this will be the width set to the menu || '10em' ||
@@ -90,4 +98,3 @@ var defaults = {
 || *Parameter Name* || *Description* || *Default Value* ||
 || events.onCancel || Fired off when the Cancel `<button>` is clicked. || function() { alert('Cancel Button Clicked'); } ||
 || events.onFinish || Fired off when the Finish `<button>` is clicked. || function() { alert('Finish Button Clicked'); } ||
-|| events.onStepChange || Fired off after the Next or Previous `<button>` is clicked and before the Step is actually changed. || function() {} ||
