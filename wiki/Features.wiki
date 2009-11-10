@@ -13,3 +13,4 @@
 
 ===Upcoming Features===
   * Integrated Form Validation (Step-Based)
+  * Step Counter (with Percentage)
