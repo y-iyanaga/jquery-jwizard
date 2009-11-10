@@ -12,6 +12,7 @@
 			enableThemeRoller: false,
 			hideTitle: false,
 			enableCounter: false,
+			counterType: 'count',
 
 			/* Button Rules */
 			hideCancelButton: false,
@@ -204,7 +205,19 @@
 			},
 
 			update: function() {
-				w.counterSpan.text((w.currentStepIndex + 1) + ' of ' + w.itemCount);
+				var text = '';
+
+				if (options.counterType === 'percentage')
+				{
+					var percentage = Math.round((w.currentStepIndex / w.itemCount) * 100);
+					text = percentage + '% Complete';
+				}
+				else
+				{
+					text = (w.currentStepIndex + 1) + ' of ' + w.itemCount + ' Complete';
+				}
+
+				w.counterSpan.text(text);
 			}
 		};
 
