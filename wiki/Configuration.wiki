@@ -8,6 +8,7 @@ var defaults = {
 	enableThemeRoller: false,
 	hideTitle: false,
 	enableCounter: false,
+	counterType: 'count',
 
 	/* Button Rules */
 	hideCancelButton: false,
@@ -63,6 +64,7 @@ var defaults = {
 || startStep || integer || Determines which step the wizard will display first || 0 ||
 || enableThemeRoller || boolean || Determines whether or not to apply jQuery UI ThemeRoller Classes to the wizard || false ||
 || enableCounter || boolean || Determines whether or not to add the counter to the wizard || false ||
+|| counterType || string ('count' OR 'percentage') || Determines the Step Counter Type (count or percent) || 'count' ||
 || hideTitle || boolean || Determines whether or not to show the title of the current wizard step. || false ||
 
 ==Button-Related==
