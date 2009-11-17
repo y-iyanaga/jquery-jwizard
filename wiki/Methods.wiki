@@ -11,7 +11,7 @@ $([wizard_selector]).jWizard([options]);
 
 To call an individual method:
 {{{
-$([wizard_selector]).data('jWizard').goToStep(3);
+$([wizard_selector]).data('jWizard').changeStep(3);
 }}}
 
 You can also store the jWizard object into a variable to make multiple references:
