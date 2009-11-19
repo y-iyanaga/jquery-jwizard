@@ -3,7 +3,7 @@
  * @author	Dominic Barnes
  * @desc	A wizard plugin that actually works with minimal configuration. (per jQuery's design philosophy)
  * @type	jQuery
- * @version	0.5b
+ * @version	0.6b
  */
 (function($){
 	var jWizard = function(element, options) {
@@ -11,8 +11,15 @@
 			startStep: 0,
 			enableThemeRoller: false,
 			hideTitle: false,
-			enableCounter: false,
-			counterType: 'count',
+
+			counter: {
+				enable: false,
+				type: 'count',
+				excludeStart: false,
+				hideStart: false,
+				excludeFinish: false,
+				hideFinish: false
+			},
 
 			/* Button Rules */
 			hideCancelButton: false,
@@ -120,7 +127,7 @@
 
 			buttons.update();
 			if (options.enableMenu)	menu.update();
-			if (options.enableCounter)	counter.update();
+			if (options.counter.enable)	counter.update();
 		};
 
 		function getCurrentStepIndex() {
@@ -135,6 +142,14 @@
 
 				x++;
 			});
+
+
+			if (returnIndex > w.actualCount)
+				w.actualIndex = w.actualCount;
+			else if (options.counter.excludeStart && returnIndex > 0)
+				w.actualIndex = returnIndex - 1;
+			else
+				w.actualIndex = returnIndex;
 
 			return returnIndex;
 		};
@@ -202,22 +217,32 @@
 			build: function() {
 				w.counterSpan = $('<span class="' + options.cssClasses.counter + '" />');
 				w.buttonsDiv.prepend(w.counterSpan);
+
+				w.actualIndex = w.currentStepIndex;
+				w.actualCount = w.itemCount;
+
+				if (options.counter.excludeStart)
+					w.actualCount--;
+				if (options.counter.excludeFinish)
+					w.actualCount--;
+
+				if (options.counter.excludeStart && w.actualIndex > 0)
+					w.actualIndex++;
 			},
 
 			update: function() {
-				var text = '';
-
-				if (options.counterType === 'percentage')
-				{
-					var percentage = Math.round((w.currentStepIndex / w.itemCount) * 100);
-					text = percentage + '% Complete';
-				}
+				if (options.counter.type === 'percentage')
+					var text = Math.round((w.actualIndex / w.actualCount) * 100) + '% Complete';
 				else
-				{
-					text = (w.currentStepIndex + 1) + ' of ' + w.itemCount + ' Complete';
-				}
+					var text = w.actualIndex + ' of ' + w.actualCount + ' Complete';
 
 				w.counterSpan.text(text);
+
+				if ( (options.counter.hideStart && w.currentStepIndex == 0)
+					|| (options.counter.hideFinish && w.currentStepIndex == (w.itemCount -1)) )
+					w.counterSpan.hide();
+				else
+					w.counterSpan.show();
 			}
 		};
 
@@ -280,6 +305,7 @@
 
 		w.children('div').addClass(options.cssClasses.steps.all);	// Add the assigned class to the Step <div>'s
 		w.itemCount = w.find(selectors.steps.all).size();
+
 		w.find(selectors.steps.all).hide();
 		w.stepWrapperDiv = $('<div class="stepwrapper"></div>');
 		w.find(selectors.steps.all).wrapAll(w.stepWrapperDiv);
@@ -287,6 +313,7 @@
 		w.firstStep = w.find(selectors.steps.all + ':first');
 		w.lastStep = w.find(selectors.steps.all + ':last');
 		w.currentStep = w.find(selectors.steps.all + ':eq(' + options.startStep + ')');
+		w.currentStepIndex = 0;
 
 		if (options.hideCancelButton)	w.cancelButton.hide();
 
@@ -297,8 +324,8 @@
 		}
 		w.append(w.buttonsDiv);
 
-		if (options.enableMenu)	menu.build();
-		if (options.enableCounter)	counter.build();
+		if (options.enableMenu)		menu.build();
+		if (options.counter.enable)	counter.build();
 
 		if (options.enableThemeRoller)
 		{
@@ -313,7 +340,7 @@
 			if (options.enableMenu)
 				w.menuDiv.find(selectors.menu.active).addClass('ui-state-default');
 
-			if (options.enableCounter)
+			if (options.counter.enable)
 				w.counterSpan.addClass('ui-widget-content');
 
 			w.find('.ui-state-default')
