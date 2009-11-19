@@ -7,8 +7,15 @@ var defaults = {
 	startStep: 0,
 	enableThemeRoller: false,
 	hideTitle: false,
-	enableCounter: false,
-	counterType: 'count',
+
+	counter: {
+		enable: false,
+		type: 'count',
+		excludeStart: false,
+		hideStart: false,
+		excludeFinish: false,
+		hideFinish: false
+	},
 
 	/* Button Rules */
 	hideCancelButton: false,
@@ -53,7 +60,6 @@ var defaults = {
 		onFinish: function(e) { return true; }
 	}
 };
-
 }}}
 
 ----
@@ -63,9 +69,15 @@ var defaults = {
 || *Parameter Name* || *Type* || *Description* || *Default Value* ||
 || startStep || integer || Determines which step the wizard will display first || 0 ||
 || enableThemeRoller || boolean || Determines whether or not to apply jQuery UI ThemeRoller Classes to the wizard || false ||
-|| enableCounter || boolean || Determines whether or not to add the counter to the wizard || false ||
-|| counterType || string ('count' OR 'percentage') || Determines the Step Counter Type (count or percent) || 'count' ||
 || hideTitle || boolean || Determines whether or not to show the title of the current wizard step. || false ||
+
+==Counter-Related==
+|| counter.enable || boolean || Determines whether or not to add the counter to the wizard || false ||
+|| counter.type || string ('count' OR 'percentage') || Determines the Step Counter Type (count or percent) || 'count' ||
+|| counter.excludeStart || boolean || Determines whether or not to exclude the first step from the counter || false ||
+|| counter.hideStart || boolean || Determines whether or not to display the counter on the first step of the wizard || false ||
+|| counter.excludeFinish || boolean || Determines whether or not to exclude the last step from the counter || false ||
+|| counter.hideFinish || boolean || Determines whether or not to display the counter on the last step of the wizard || false ||
 
 ==Button-Related==
 || hideCancelButton || boolean || Determines whether or not to show the Cancel `<button>` at all || false ||
