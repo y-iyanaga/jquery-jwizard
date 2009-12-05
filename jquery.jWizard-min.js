@@ -32,4 +32,6 @@ w.append(w.buttonsDiv);if(options.enableMenu)menu.build();if(options.counter.ena
 w.titleDiv.addClass('ui-widget-header');if(options.enableMenu)
 w.menuDiv.find(selectors.menu.active).addClass('ui-state-default');if(options.counter.enable)
 w.counterSpan.addClass('ui-widget-content');w.find('.ui-state-default').live('mouseover',function(){$(this).addClass('ui-state-hover');}).live('mouseout',function(){$(this).removeClass('ui-state-hover');}).live('mousedown',function(){$(this).addClass('ui-state-active');}).live('mouseup',function(){$(this).removeClass('ui-state-active');});}
-w.changeStep(parseInt(options.startStep),true);return w;};$.fn.jWizard=function(options){return this.each(function(){var element=$(this);if(element.data('jWizard'))return;var w=new jWizard(this,options);element.data('jWizard',w);});};})(jQuery);
+w.changeStep(parseInt(options.startStep),true);return w;};$.fn.jWizard=function(options){if(this.length<=0)
+return this;else
+{return this.each(function(){var element=$(this);if(element.data('jWizard'))return;var w=new jWizard(this,options);element.data('jWizard',w);});}};})(jQuery);
