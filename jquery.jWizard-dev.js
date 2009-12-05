@@ -356,17 +356,22 @@
 	};
 
 	$.fn.jWizard = function(options) {
-		return this.each(function() {
-			var element = $(this);
+		if (this.length <= 0)
+			return this;
+		else
+		{
+			return this.each(function() {
+				var element = $(this);
 
-			// Return early if this element already has a plugin instance
-			if (element.data('jWizard')) return;
+				// Return early if this element already has a plugin instance
+				if (element.data('jWizard')) return;
 
-			// pass options to plugin constructor
-			var w = new jWizard(this, options);
+				// pass options to plugin constructor
+				var w = new jWizard(this, options);
 
-			// Store plugin object in this element's data
-			element.data('jWizard', w);
-		});
+				// Store plugin object in this element's data
+				element.data('jWizard', w);
+			});
+		}
 	};
 })(jQuery);
