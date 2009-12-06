@@ -70,31 +70,7 @@
 
 		var w = $(element);	// Create a reference to the wizard itself
 
-		// Assign some strings here so we can easily call on them again (rather than running those crazy concats all the time)
-		var tmpMenuDiv = 'div.' + options.cssClasses.menu.div;
-		var tmpStepwrapperDiv =  'div.' + options.cssClasses.steps.wrapper;
-		var tmpStepsDiv = 'div.' + options.cssClasses.steps.all;
-		var selectors = {
-			title: {
-				div: 'div.' + options.cssClasses.title
-			},
-			menu: {
-				div: tmpMenuDiv,
-				active: tmpMenuDiv + ' li.' + options.cssClasses.menu.active,
-				current: tmpMenuDiv + ' li.' + options.cssClasses.menu.current,
-				inactive: tmpMenuDiv + ' li.' + options.cssClasses.menu.inactive
-			},
-			counter: 'span.' + options.cssClasses.counter,
-			steps: {
-				wrapper: tmpStepwrapperDiv,
-				all: tmpStepsDiv,
-				current: tmpStepsDiv + ':visible'
-			},
-			buttons: {
-				div: 'div.' + options.cssClasses.buttons.div
-			}
-		};
-
+		var	selStepsAll = 'div.' + options.cssClasses.steps.all;
 
 		w.changeStep = function(nextStep, isInit) {
 			if (typeof nextStep === 'number')
@@ -105,11 +81,11 @@
 					return false;
 				}
 
-				nextStep = w.find(selectors.steps.all + ':eq(' + nextStep + ')');
+				nextStep = w.find(selStepsAll + ':eq(' + nextStep + ')');
 			}
 			else if (typeof nextStep === 'object')
 			{
-				if ( !nextStep.is(selectors.steps.all) )
+				if ( !nextStep.is(selStepsAll) )
 				{
 					alert('Supplied Element is NOT one of the Wizard Steps');
 					return false;
@@ -122,7 +98,7 @@
 
 			nextStep.show().triggerHandler('onActivate');
 
-			w.currentStep = w.find(selectors.steps.current);
+			w.currentStep = w.find(selStepsAll + ':visible');
 			w.currentStepIndex = getCurrentStepIndex();
 
 			buttons.update();
@@ -131,11 +107,11 @@
 		};
 
 		function getCurrentStepIndex() {
-			var returnIndex = 0;
-			var currentTitle = w.currentStep.attr('title');
+			var	returnIndex = 0,
+				currentTitle = w.currentStep.attr('title');
 
 			var x = 0;
-			w.find(selectors.steps.all).each(function() {
+			w.find(selStepsAll).each(function() {
 				var thisTitle = $(this).attr('title');
 
 				if (thisTitle === currentTitle)	returnIndex = x;
@@ -156,35 +132,36 @@
 
 		var menu = {
 			build: function() {
-				var tmpHtml = '<div class="menuwrapper"><div class="menu"><ol>';
-				var x = 0;
-				w.find(selectors.steps.all).each(function() {
+				var	x = 0,
+					tmpHtml = '<div id="jw-menuwrapper"><div id="jw-menu"><ol>';
+
+				w.find(selStepsAll).each(function() {
 					tmpHtml += '<li><a step="' + x + '">' + $(this).attr('title') + '</a></li>';
 					x++;
 				});
 				tmpHtml += '</ol></div></div>';
 
 				w.menuDiv = $(tmpHtml);
-				w.find(selectors.steps.wrapper).prepend(w.menuDiv).append('<div style="clear: both;"></div>');
+				w.find('#jw-stepwrapper').prepend(w.menuDiv).append('<div style="clear: both;"></div>');
 				w.menuDiv.css({
 					'width': options.menuWidth,
 					'margin-right': '-' + options.menuWidth,
 					'float': 'left'
 				});
-				w.find(selectors.steps.all).css('margin-left', options.menuWidth);
+				w.find(selStepsAll).css('margin-left', options.menuWidth);
 
-				w.find(selectors.menu.active).live('click', function() {
+				w.find('li.' + options.cssClasses.menu.active).live('click', function() {
 					w.changeStep(parseInt($(this).children('a').attr('step')));
 				});
 			},
 
 			update: function() {
-				var menuItemIndex = 0;
-				var menuItemStatus = 'active';
+				var	menuItemIndex = 0,
+					menuItemStatus = 'active';
 
-				w.menuDiv.find(selectors.menu.div + ' a').each(function() {
-					var menuItem = $(this).parent();
-					var menuItemAnchor = $(this);
+				$('#jw-menu').find('a').each(function() {
+					var	menuItem = $(this).parent(),
+						menuItemAnchor = $(this);
 
 					if ( menuItemAnchor.text() === w.currentStep.attr('title') )
 						menuItemStatus = 'current';
@@ -215,7 +192,7 @@
 
 		var counter = {
 			build: function() {
-				w.counterSpan = $('<span class="' + options.cssClasses.counter + '" />');
+				w.counterSpan = $('<span id="jw-counter" class="' + options.cssClasses.counter + '" />');
 				w.buttonsDiv.prepend(w.counterSpan);
 
 				w.actualIndex = w.currentStepIndex;
@@ -248,17 +225,17 @@
 
 		var buttons = {
 			build: function() {
-				w.buttonsDiv = $('<div class="' + options.cssClasses.buttons.div + '"></div>');
+				w.buttonsDiv = $('<div id="jw-buttons" class="' + options.cssClasses.buttons.div + '"></div>');
 				w.cancelButton = $('<button type="button" class="' + options.cssClasses.buttons.cancel + '">' + options.buttonText.cancel + '</button>');
 				w.previousButton = $('<button type="button" class="' + options.cssClasses.buttons.previous + '">' + options.buttonText.previous + '</button>');
 				w.nextButton = $('<button type="button" class="' + options.cssClasses.buttons.next + '">' + options.buttonText.next + '</button>');
 				w.finishButton = $('<button type="' + options.finishButtonType + '" class="' + options.cssClasses.buttons.finish + '">' + options.buttonText.finish + '</button>');
 
 				w.nextButton.click(function() {
-					w.changeStep(w.currentStep.next(selectors.steps.all));
+					w.changeStep(w.currentStep.next(selStepsAll));
 				});
 				w.previousButton.click(function() {
-					w.changeStep(w.currentStep.prev(selectors.steps.all));
+					w.changeStep(w.currentStep.prev(selStepsAll));
 				});
 				w.cancelButton.click(function() {
 					w.trigger('onCancel');
@@ -271,9 +248,9 @@
 			},
 
 			update: function() {
-				var currentId = w.currentStep.attr('id');
-				var firstId = w.firstStep.attr('id');
-				var lastId = w.lastStep.attr('id');
+				var	currentId = w.currentStep.attr('id'),
+					firstId = w.firstStep.attr('id'),
+					lastId = w.lastStep.attr('id');
 
 				switch (currentId)
 				{
@@ -304,22 +281,22 @@
 		buttons.build();
 
 		w.children('div').addClass(options.cssClasses.steps.all);	// Add the assigned class to the Step <div>'s
-		w.itemCount = w.find(selectors.steps.all).size();
+		w.itemCount = w.find(selStepsAll).size();
 
-		w.find(selectors.steps.all).hide();
-		w.stepWrapperDiv = $('<div class="stepwrapper"></div>');
-		w.find(selectors.steps.all).wrapAll(w.stepWrapperDiv);
+		w.find(selStepsAll).hide();
+		w.stepWrapperDiv = $('<div id="jw-stepwrapper"></div>');
+		w.find(selStepsAll).wrapAll(w.stepWrapperDiv);
 
-		w.firstStep = w.find(selectors.steps.all + ':first');
-		w.lastStep = w.find(selectors.steps.all + ':last');
-		w.currentStep = w.find(selectors.steps.all + ':eq(' + options.startStep + ')');
+		w.firstStep = w.find(selStepsAll + ':first');
+		w.lastStep = w.find(selStepsAll + ':last');
+		w.currentStep = w.find(selStepsAll + ':eq(' + options.startStep + ')');
 		w.currentStepIndex = 0;
 
 		if (options.hideCancelButton)	w.cancelButton.hide();
 
 		if (!options.hideTitle)
 		{
-			w.titleDiv = $('<div class="' + options.cssClasses.title + '"></div>');
+			w.titleDiv = $('<div id="jw-title" class="' + options.cssClasses.title + '"></div>');
 			w.prepend(w.titleDiv);
 		}
 		w.append(w.buttonsDiv);
@@ -330,7 +307,7 @@
 		if (options.enableThemeRoller)
 		{
 			w.addClass('ui-widget');
-			w.find(selectors.steps.wrapper).addClass('ui-widget-content');
+			w.find('#jw-stepwrapper').addClass('ui-widget-content');
 			w.buttonsDiv.addClass('ui-widget-content');
 			w.buttonsDiv.find('button').addClass('ui-state-default');
 
@@ -338,16 +315,16 @@
 				w.titleDiv.addClass('ui-widget-header');
 
 			if (options.enableMenu)
-				w.menuDiv.find(selectors.menu.active).addClass('ui-state-default');
+				w.menuDiv.find('li.' + options.cssClasses.menu.active).addClass('ui-state-default');
 
 			if (options.counter.enable)
 				w.counterSpan.addClass('ui-widget-content');
 
 			w.find('.ui-state-default')
 				.live('mouseover',	function() { $(this).addClass('ui-state-hover'); } )
-				.live('mouseout',		function() { $(this).removeClass('ui-state-hover'); } )
+				.live('mouseout',	function() { $(this).removeClass('ui-state-hover'); } )
 				.live('mousedown',	function() { $(this).addClass('ui-state-active'); } )
-				.live('mouseup',		function() { $(this).removeClass('ui-state-active'); } );
+				.live('mouseup',	function() { $(this).removeClass('ui-state-active'); } );
 		}
 
 		w.changeStep(parseInt(options.startStep), true);
